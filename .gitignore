@@ -1,0 +1,15 @@
+# Local data
+data/*.psv
+data/*.csv
+data/raw/
+data/processed/
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
