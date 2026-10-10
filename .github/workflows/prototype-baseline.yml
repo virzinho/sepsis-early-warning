@@ -3,6 +3,10 @@ name: Prototype baseline
 on:
   push:
     branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "requirements.txt"
   workflow_dispatch:
 
 jobs:
