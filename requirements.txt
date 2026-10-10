@@ -1,2 +1,1 @@
-pandas
-matplotlib
+pandas\nmatplotlib\nnumpy\nscikit-learn\n
