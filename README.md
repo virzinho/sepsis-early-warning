@@ -52,12 +52,13 @@ In the original challenge, the positive sepsis label is shifted earlier to suppo
 - [x] Split an observation window from future data
 - [x] Begin simple feature engineering on the first six observations
 - [x] Handle missing HR values when computing a simple change feature
+- [x] Build a reusable patient-processing function
+- [x] Scale the same feature extraction logic to the first 100 patients
 
 ### Next steps
 - [ ] Define a rigorous prediction horizon
-- [ ] Build a reusable patient-processing function
-- [ ] Scale feature extraction to more patients
 - [ ] Investigate missing-data strategies
+- [ ] Expand the feature set
 - [ ] Create train/test splits at patient level
 - [ ] Build an interpretable baseline model
 - [ ] Evaluate sensitivity, specificity, AUROC and AUPRC
@@ -73,7 +74,8 @@ sepsis-early-warning/
 ├── data/
 │   └── README.md
 └── notebooks/
-    └── 01_patient_exploration.ipynb
+    ├── 01_patient_exploration.ipynb
+    └── 02_build_patient_features.ipynb
 ```
 
 ## Important methodological note
