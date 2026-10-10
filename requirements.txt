@@ -1,1 +1,5 @@
-pandas\nmatplotlib\nnumpy\nscikit-learn\nrequests\n
+pandas
+matplotlib
+numpy
+scikit-learn
+requests
