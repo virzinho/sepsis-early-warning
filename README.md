@@ -7,6 +7,34 @@ A biomedical AI portfolio project exploring early warning of sepsis from routine
 Fabio Virzì  
 MSc student in **AI for Biomedicine and Healthcare (AIBH)**, University of Turin.
 
+## Open the project in Jupyter
+
+### Windows — easiest method
+
+You do **not** need to configure Jupyter manually.
+
+1. On GitHub click **Code → Download ZIP**.
+2. Extract the ZIP to a normal folder.
+3. Double-click **`start_jupyter_windows.bat`**.
+4. On the first launch the script creates a local Python environment and installs the project dependencies.
+5. JupyterLab opens automatically in your browser.
+6. Open the `notebooks` folder and start with:
+   - `01_patient_exploration.ipynb`
+   - then `02_build_patient_features.ipynb`
+
+You need Python installed on Windows. If the launcher says that Python cannot be found, install Python 3 and enable **Add Python to PATH** during installation.
+
+### If Jupyter is already installed
+
+Clone or download this repository, open a terminal inside the project directory and run:
+
+```bash
+pip install -r requirements.txt
+jupyter lab
+```
+
+The notebooks are standard `.ipynb` files and can also be opened directly with Jupyter Notebook or JupyterLab.
+
 ## Project goal
 
 The project investigates whether routinely collected ICU variables can identify patients approaching a future PhysioNet sepsis warning event.
@@ -106,7 +134,8 @@ sepsis-early-warning/
 │   └── features.py
 ├── .gitignore
 ├── README.md
-└── requirements.txt
+├── requirements.txt
+└── start_jupyter_windows.bat
 ```
 
 ## Important methodological note
