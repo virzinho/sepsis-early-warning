@@ -2,13 +2,9 @@
 setlocal
 cd /d "%~dp0"
 
-echo.
-echo ==========================================
-echo   Sepsis Early Warning - Jupyter Launcher
-echo ==========================================
-echo.
-
 set "PYTHON_CMD="
+set "ENV_DIR=%LOCALAPPDATA%\sepsis-early-warning-venv"
+set "REQ_COPY=%ENV_DIR%\requirements.txt"
 
 where py >nul 2>nul
 if not errorlevel 1 (
@@ -22,60 +18,41 @@ if not errorlevel 1 (
 )
 
 if not defined PYTHON_CMD (
-    echo.
-    echo Compatible Python not found.
-    echo.
-    echo This project needs Python 3.13 or 3.12.
-    echo Your Python 3.15 is too new for some current Jupyter dependencies.
-    echo.
-    echo Install Python 3.13 x64 from:
-    echo https://www.python.org/downloads/
-    echo.
-    echo During installation, enable "Add python.exe to PATH".
-    echo Then close this window and run this file again.
-    echo.
+    echo Python 3.13 or 3.12 is required for this project.
+    echo Your Python 3.15 can stay installed.
     pause
     exit /b 1
 )
 
-echo Using %PYTHON_CMD%
-%PYTHON_CMD% --version
-echo.
-
-if not exist ".venv-jupyter\Scripts\python.exe" (
-    echo Creating a clean project environment...
-    %PYTHON_CMD% -m venv .venv-jupyter
-    if errorlevel 1 (
-        echo.
-        echo Could not create the virtual environment.
-        pause
-        exit /b 1
-    )
-
-    call ".venv-jupyter\Scripts\activate.bat"
-
-    echo Updating pip...
+if not exist "%ENV_DIR%\Scripts\python.exe" (
+    echo First setup only: creating Jupyter environment...
+    %PYTHON_CMD% -m venv "%ENV_DIR%"
+    call "%ENV_DIR%\Scripts\activate.bat"
     python -m pip install --upgrade pip
-
-    echo Installing project dependencies...
     pip install -r requirements.txt
-
     if errorlevel 1 (
-        echo.
-        echo Dependency installation failed.
-        echo Delete the .venv-jupyter folder and try again.
+        echo Installation failed.
         pause
         exit /b 1
     )
+    copy /Y requirements.txt "%REQ_COPY%" >nul
 ) else (
-    call ".venv-jupyter\Scripts\activate.bat"
+    call "%ENV_DIR%\Scripts\activate.bat"
+
+    if not exist "%REQ_COPY%" (
+        pip install -r requirements.txt
+        copy /Y requirements.txt "%REQ_COPY%" >nul
+    ) else (
+        fc /b requirements.txt "%REQ_COPY%" >nul
+        if errorlevel 1 (
+            echo Project dependencies changed. Updating once...
+            pip install -r requirements.txt
+            copy /Y requirements.txt "%REQ_COPY%" >nul
+        )
+    )
 )
 
-echo.
-echo Environment ready.
-echo Opening the first notebook directly in JupyterLab...
-echo.
-
+echo Opening Jupyter...
 jupyter lab "notebooks\01_patient_exploration.ipynb"
 
 endlocal
