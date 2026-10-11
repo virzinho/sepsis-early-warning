@@ -22,7 +22,9 @@ You do **not** need to configure Jupyter manually.
    - `01_patient_exploration.ipynb`
    - then `02_build_patient_features.ipynb`
 
-You need Python installed on Windows. If the launcher says that Python cannot be found, install Python 3 and enable **Add Python to PATH** during installation.
+You need **Python 3.13 or Python 3.12** installed on Windows. Python 3.15 is currently too new for some Jupyter dependencies used by this project. The launcher automatically looks for Python 3.13 first and Python 3.12 second.
+
+If you previously ran the launcher with Python 3.15, that failed environment can be ignored: the updated launcher now creates a separate clean environment called `.venv-jupyter`.
 
 ### If Jupyter is already installed
 
