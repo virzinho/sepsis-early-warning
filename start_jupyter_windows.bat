@@ -40,8 +40,8 @@ if not exist ".venv\Scripts\python.exe" (
 )
 
 echo.
-echo Opening JupyterLab...
+echo Opening the first notebook directly in JupyterLab...
 echo Close this black window only when you have finished working.
 echo.
 
-jupyter lab
+jupyter lab "notebooks\01_patient_exploration.ipynb"
