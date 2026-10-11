@@ -6,14 +6,14 @@ Early-warning experiment on the PhysioNet / Computing in Cardiology Challenge 20
 
 Can routinely collected ICU variables help identify a future sepsis warning event?
 
-The current setup uses:
+Current setup:
 - 6 hours of observations
-- a 6-hour prediction window
+- 6-hour prediction window
 - patient-level train/test splitting
-- simple time-window features from vital signs
-- logistic regression as the first baseline
+- simple time-window features
+- logistic regression baseline
 
-The target is the future **PhysioNet `SepsisLabel`**, not raw clinical sepsis onset. In the challenge data the label is already shifted 6 hours before the defined onset.
+The target is the future PhysioNet `SepsisLabel`, not raw clinical sepsis onset.
 
 ## Current baseline
 
@@ -35,21 +35,20 @@ More detail: [results/prototype_baseline.md](results/prototype_baseline.md)
 
 ## Notebooks
 
-- `01_patient_exploration.ipynb` — first look at one patient, missing data, simple summaries and the first leakage check
-- `02_build_patient_features.ipynb` — turn the same logic into reusable patient-level features
-
-The production-style sliding-window version is in `src/`.
+- `01_patient_exploration.ipynb`
+- `02_build_patient_features.ipynb`
 
 ## Open in Jupyter on Windows
 
-Python **3.13 or 3.12** is recommended. Python 3.15 can remain installed; the launcher simply does not use it.
+If Jupyter is already installed:
 
-1. Download and extract the repository.
-2. Double-click `start_jupyter_windows.bat`.
-3. The first run installs Jupyter and the dependencies.
-4. Later runs reuse the same environment stored in Windows, even if you download a newer copy of the repo.
+1. download and extract the repository
+2. double-click `start_jupyter_windows.bat`
+3. it simply opens the first notebook using your existing Jupyter installation
 
-After the first setup, opening the project should only require starting Jupyter rather than reinstalling everything.
+The launcher does **not** install Python, Jupyter or project dependencies.
+
+If the launcher cannot find Jupyter, open Jupyter normally and browse to the extracted project folder.
 
 ## Files
 
