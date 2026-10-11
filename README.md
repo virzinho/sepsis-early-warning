@@ -1,145 +1,69 @@
 # Sepsis Early Warning
 
-A biomedical AI portfolio project exploring early warning of sepsis from routinely collected ICU data.
+Early-warning experiment on the PhysioNet / Computing in Cardiology Challenge 2019 ICU dataset.
 
-## Author
+## Question
 
-Fabio Virzì  
-MSc student in **AI for Biomedicine and Healthcare (AIBH)**, University of Turin.
+Can routinely collected ICU variables help identify a future sepsis warning event?
 
-## Open the project in Jupyter
+The current setup uses:
+- 6 hours of observations
+- a 6-hour prediction window
+- patient-level train/test splitting
+- simple time-window features from vital signs
+- logistic regression as the first baseline
 
-### Windows — easiest method
+The target is the future **PhysioNet `SepsisLabel`**, not raw clinical sepsis onset. In the challenge data the label is already shifted 6 hours before the defined onset.
 
-You do **not** need to configure Jupyter manually.
+## Current baseline
 
-1. On GitHub click **Code → Download ZIP**.
-2. Extract the ZIP to a normal folder.
-3. Double-click **`start_jupyter_windows.bat`**.
-4. On the first launch the script creates a local Python environment and installs the project dependencies.
-5. JupyterLab opens automatically in your browser.
-6. Open the `notebooks` folder and start with:
-   - `01_patient_exploration.ipynb`
-   - then `02_build_patient_features.ipynb`
+Development run on the first 1,000 patients from training set A:
 
-You need **Python 3.13 or Python 3.12** installed on Windows. Python 3.15 is currently too new for some Jupyter dependencies used by this project. The launcher automatically looks for Python 3.13 first and Python 3.12 second.
+| Metric | Result |
+|---|---:|
+| Eligible patients | 970 |
+| Windows | 27,565 |
+| Positive windows | 394 |
+| AUROC | 0.747 |
+| AUPRC | 0.0548 |
+| Recall, positive class | 0.513 |
+| Precision, positive class | 0.032 |
 
-If you previously ran the launcher with Python 3.15, that failed environment can be ignored: the updated launcher now creates a separate clean environment called `.venv-jupyter`.
+The main issue so far is false alarms. The positive class represents only about 1.4% of windows, so accuracy is not a useful headline metric.
 
-### If Jupyter is already installed
+More detail: [results/prototype_baseline.md](results/prototype_baseline.md)
 
-Clone or download this repository, open a terminal inside the project directory and run:
+## Notebooks
 
-```bash
-pip install -r requirements.txt
-jupyter lab
+- `01_patient_exploration.ipynb` — first look at one patient, missing data, simple summaries and the first leakage check
+- `02_build_patient_features.ipynb` — turn the same logic into reusable patient-level features
+
+The production-style sliding-window version is in `src/`.
+
+## Open in Jupyter on Windows
+
+Python **3.13 or 3.12** is recommended. Python 3.15 can remain installed; the launcher simply does not use it.
+
+1. Download and extract the repository.
+2. Double-click `start_jupyter_windows.bat`.
+3. The first run installs Jupyter and the dependencies.
+4. Later runs reuse the same environment stored in Windows, even if you download a newer copy of the repo.
+
+After the first setup, opening the project should only require starting Jupyter rather than reinstalling everything.
+
+## Files
+
 ```
-
-The notebooks are standard `.ipynb` files and can also be opened directly with Jupyter Notebook or JupyterLab.
-
-## Project goal
-
-The project investigates whether routinely collected ICU variables can identify patients approaching a future PhysioNet sepsis warning event.
-
-The emphasis is not only on model performance, but on building a **causal, reproducible and leakage-aware pipeline**:
-
-- understand raw patient-level longitudinal data;
-- quantify missingness;
-- engineer interpretable time-window features;
-- preserve temporal order;
-- split train/test data by patient;
-- establish a transparent baseline before trying more complex models.
+notebooks/   exploratory work
+src/         feature building and baseline model
+scripts/     development data downloader
+results/     current baseline results
+docs/        modelling notes
+```
 
 ## Dataset
 
-This project uses the public **PhysioNet / Computing in Cardiology Challenge 2019** dataset:
-
+PhysioNet / Computing in Cardiology Challenge 2019  
 https://physionet.org/content/challenge-2019/1.0.0/
 
-The training data contain hourly clinical measurements such as heart rate, oxygen saturation, temperature, blood pressure, respiratory rate, laboratory values, demographics and `SepsisLabel`.
-
-In the original challenge, `SepsisLabel` is shifted **6 hours before the defined sepsis onset**. Therefore this repository explicitly refers to the modelling target as a **future warning label**, rather than treating it as direct clinical onset.
-
-## Prediction design
-
-The current prototype uses sliding windows:
-
-- **6-hour observation window**
-- **6-hour future prediction window**
-- target = whether `SepsisLabel` becomes positive in the following 6 hours
-- windows are excluded after the warning label has already become positive
-
-Multiple samples may come from one patient. Train/test splitting is therefore performed **by patient ID**, not by individual row, to prevent patient-level leakage.
-
-See [docs/modelling_design.md](docs/modelling_design.md) for details.
-
-## Prototype baseline
-
-The automated development pipeline was tested on the first **1,000 patients** from training set A.
-
-It produced:
-
-- **970** eligible patients
-- **27,565** sliding-window samples
-- **394** positive windows (~1.43%)
-- logistic-regression AUROC: **0.747**
-- AUPRC: **0.0548**
-- positive-class recall: **0.513**
-- positive-class precision: **0.032**
-
-The low precision is important: the model currently generates many false alarms. Accuracy is not emphasized because the target is extremely imbalanced.
-
-Full interpretation: [results/prototype_baseline.md](results/prototype_baseline.md)
-
-## Current status
-
-- [x] Single-patient exploration
-- [x] Missing-data exploration
-- [x] Time-series visualization
-- [x] Data-leakage analysis
-- [x] Reusable feature extraction
-- [x] Missing-safe trend features
-- [x] Fixed observation and prediction horizons
-- [x] Sliding-window dataset generation
-- [x] Patient-grouped train/test split
-- [x] Median imputation inside the modelling pipeline
-- [x] Interpretable logistic-regression baseline
-- [x] Automated GitHub Actions development run
-- [ ] Threshold analysis
-- [ ] Calibration analysis
-- [ ] Confidence intervals / repeated validation
-- [ ] Add selected laboratory variables
-- [ ] Compare tree-based models
-- [ ] Test on the full training cohort
-
-## Repository structure
-
-```
-sepsis-early-warning/
-├── .github/
-│   └── workflows/
-│       └── prototype-baseline.yml
-├── data/
-│   └── README.md
-├── docs/
-│   └── modelling_design.md
-├── notebooks/
-│   ├── 01_patient_exploration.ipynb
-│   └── 02_build_patient_features.ipynb
-├── results/
-│   └── prototype_baseline.md
-├── scripts/
-│   └── download_sample.py
-├── src/
-│   ├── baseline.py
-│   ├── build_dataset.py
-│   └── features.py
-├── .gitignore
-├── README.md
-├── requirements.txt
-└── start_jupyter_windows.bat
-```
-
-## Important methodological note
-
-This is a learning and research portfolio project. It is **not a clinical decision-support system** and must not be used for patient care.
+This is a research/portfolio project, not a clinical tool.
